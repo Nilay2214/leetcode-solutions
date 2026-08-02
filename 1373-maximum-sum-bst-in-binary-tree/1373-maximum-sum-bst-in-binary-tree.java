@@ -18,47 +18,36 @@ class Solution {
 
     private int maxSum = 0;
 
-    class NodeInfo {
-        boolean isBST;
-        int min;
-        int max;
-        int sum;
-
-        NodeInfo(boolean isBST, int min, int max, int sum) {
-            this.isBST = isBST;
-            this.min = min;
-            this.max = max;
-            this.sum = sum;
-        }
-    }
-
     public int maxSumBST(TreeNode root) {
         dfs(root);
         return maxSum;
     }
 
-    private NodeInfo dfs(TreeNode node) {
+    // {isBST(1/0), min, max, sum}
+    private int[] dfs(TreeNode node) {
 
         if (node == null) {
-            return new NodeInfo(true, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+            return new int[]{1, Integer.MAX_VALUE, Integer.MIN_VALUE, 0};
         }
 
-        NodeInfo left = dfs(node.left);
-        NodeInfo right = dfs(node.right);
+        int[] left = dfs(node.left);
+        int[] right = dfs(node.right);
 
-        if (left.isBST && right.isBST &&
-            node.val > left.max &&
-            node.val < right.min) {
+        if (left[0] == 1 && right[0] == 1 &&
+            node.val > left[2] &&
+            node.val < right[1]) {
 
-            int sum = left.sum + right.sum + node.val;
+            int sum = left[3] + right[3] + node.val;
             maxSum = Math.max(maxSum, sum);
 
-            int min = Math.min(node.val, left.min);
-            int max = Math.max(node.val, right.max);
-
-            return new NodeInfo(true, min, max, sum);
+            return new int[]{
+                1,
+                Math.min(node.val, left[1]),
+                Math.max(node.val, right[2]),
+                sum
+            };
         }
 
-        return new NodeInfo(false, Integer.MIN_VALUE, Integer.MAX_VALUE, 0);
+        return new int[]{0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0};
     }
 }
